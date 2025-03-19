@@ -1,17 +1,31 @@
 package main
 
 import (
-    "bufio"
-    "fmt"
-    "os"
-    "strings"
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+
+	"example.com/nonezerone/pokeapi"
 )
 
 const (
     promptString string = "Pokedex > "
 )
 
-func startRepl() {
+type cliCommand struct {
+	name        string
+	description string
+	callback    func(*config) error
+}
+
+type config struct {
+    pokeapiClient    pokeapi.Client
+    nextLocation     *string
+    previousLocation *string
+}
+
+func startRepl(cfg *config) {
     scanner := bufio.NewScanner(os.Stdin)
     for {
         fmt.Print(promptString)
@@ -26,7 +40,7 @@ func startRepl() {
 
         command, exists := getCommands()[commandName]
         if exists {
-            err := command.callback()
+            err := command.callback(cfg)
             if err != nil {
                 fmt.Println(err)
             }
@@ -44,12 +58,6 @@ func cleanInput(text string) []string {
     return words
 }
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func() error
-}
-
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"help": {
@@ -57,6 +65,16 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+        "map": {
+            name:        "map",
+            description: "Displays the names of 20 location areas in the Pokemon world",
+            callback:    commandMapf,
+        },
+        "mapb": {
+            name:        "mapb",
+            description: "Displays the names of 20 previous location areas in the Pokemon world",
+            callback:    commandMapb,
+        },
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
