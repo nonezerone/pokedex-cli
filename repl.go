@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"example.com/nonezerone/pokeapi"
+	"github.com/nonezerone/pokedex-cli/internal/pokeapi"
 )
 
 const (
