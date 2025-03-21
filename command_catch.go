@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-
-	"github.com/nonezerone/pokedex-cli/internal/pokeapi"
 )
 
 func commandCatch(cfg *config, pokemon string) error {
@@ -21,10 +19,9 @@ func commandCatch(cfg *config, pokemon string) error {
     fmt.Println("Throwing a Pokeball at " + pokemon + "...")
 
     if rand.Intn(pokemonResp.BaseExperience) > pokemonResp.BaseExperience / 2 {
-        p := make(map[string]pokeapi.Pokemon)
-        p[pokemonResp.Name] = pokemonResp
-        cfg.pokedex.Entry = p
+        cfg.pokedex.Entry[pokemonResp.Name] = pokemonResp
         fmt.Printf("%s was caught!\n", pokemonResp.Name)
+        fmt.Println("You may now inspect it with the inspect command.")
     } else {
         fmt.Printf("%s escaped!\n", pokemonResp.Name)
     }
